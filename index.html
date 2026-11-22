@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Acervos do Saber Studio — Ferramenta Interna de Gestão de Canal</title>
+  <style>
+    :root {
+      --bg: #0B1618;
+      --surface: #13352D;
+      --surface-alt: #0F2722;
+      --border: rgba(229, 185, 75, 0.28);
+      --gold: #E5B94B;
+      --text: #F8F6F0;
+      --muted: #C8D0CC;
+      --yt-red: #FF0033;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    a { color: var(--gold); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    header {
+      background: #081012;
+      border-bottom: 1px solid var(--border);
+      padding: 16px 40px;
+    }
+    .nav-wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--text);
+    }
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: var(--surface);
+      border: 1px solid var(--gold);
+      display: grid;
+      place-items: center;
+      color: var(--gold);
+      font-weight: 800;
+      font-size: 0.95rem;
+    }
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+    nav a { color: var(--text); }
+    nav a.active, nav a.highlight { color: var(--gold); }
+    main {
+      max-width: 1280px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 36px 40px 28px;
+      flex: 1;
+    }
+    .yt-badge-bar {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: #0F221F;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 999px;
+      padding: 8px 18px;
+      margin-bottom: 22px;
+      font-size: 0.92rem;
+    }
+    .yt-badge-bar strong { color: #FFFFFF; }
+    .hero {
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      gap: 28px;
+      align-items: stretch;
+      margin-bottom: 24px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+    }
+    .card-dark {
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+    }
+    .eyebrow {
+      color: var(--gold);
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+    h1 {
+      font-size: 2.15rem;
+      line-height: 1.18;
+      margin-bottom: 14px;
+      color: #FFFFFF;
+    }
+    .lead {
+      font-size: 1.03rem;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .meta-box {
+      background: rgba(11, 22, 24, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 12px 14px;
+    }
+    .meta-label {
+      font-size: 0.78rem;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 3px;
+    }
+    .meta-val {
+      font-size: 0.94rem;
+      font-weight: 600;
+      color: var(--text);
+      word-break: break-word;
+    }
+    h2 {
+      font-size: 1.22rem;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+    ul.check {
+      list-style: none;
+      display: grid;
+      gap: 9px;
+      margin-bottom: 18px;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+    ul.check li::before {
+      content: "✓ ";
+      color: var(--gold);
+      font-weight: 700;
+    }
+    .compliance-box {
+      background: var(--surface-alt);
+      border: 2px solid var(--gold);
+      border-radius: 14px;
+      padding: 22px 28px;
+    }
+    .compliance-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .compliance-links {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .link-pill {
+      display: block;
+      background: rgba(11, 22, 24, 0.78);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      color: var(--text);
+    }
+    .link-pill strong {
+      display: block;
+      color: var(--gold);
+      font-size: 0.93rem;
+      margin-bottom: 3px;
+    }
+    .link-pill span {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--muted);
+      word-break: break-all;
+    }
+    footer {
+      border-top: 1px solid var(--border);
+      background: #081012;
+      padding: 18px 40px;
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+    .footer-wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    @media (max-width: 960px) {
+      .hero, .compliance-links, .meta-grid { grid-template-columns: 1fr; }
+      header, main, footer { padding-left: 20px; padding-right: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav-wrap">
+      <div class="brand">
+        <div class="brand-mark">AS</div>
+        <span>Acervos do Saber Studio</span>
+      </div>
+      <nav aria-label="Navegação principal">
+        <a class="active" href="./">Início</a>
+        <a class="highlight" href="privacy.html">Política de Privacidade</a>
+        <a href="terms.html">Termos de Utilização</a>
+        <a href="https://www.youtube.com/@AcervosdoSaber" target="_blank" rel="noopener noreferrer">Canal Oficial (@AcervosdoSaber)</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="yt-badge-bar" role="region" aria-label="Atribuição dos Serviços de API do YouTube">
+      <svg width="28" height="20" viewBox="0 0 28 20" aria-hidden="true">
+        <rect x="0" y="0" width="28" height="20" rx="5" fill="#FF0033"></rect>
+        <polygon points="11,5 20,10 11,15" fill="#FFFFFF"></polygon>
+      </svg>
+      <span>
+        <strong>YouTube API Services</strong> — Integrado oficialmente à <strong>YouTube Data API v3</strong> e à <strong>YouTube Analytics API</strong> ·
+        <a href="https://www.youtube.com/t/terms" target="_blank" rel="noopener noreferrer">Termos de Serviço do YouTube</a>
+      </span>
+    </div>
+
+    <section class="hero">
+      <div class="card">
+        <div class="eyebrow">Aplicação Interna de Criador · Internal Creator CLI Tool</div>
+        <h1>Acervos do Saber Studio</h1>
+        <p class="lead">
+          Ferramenta desktop privada de linha de comando (CLI) desenvolvida e operada exclusivamente pelo proprietário
+          <strong>Gabriel Henrique P. de Paula</strong> para gestão editorial, publicação agendada e análise de métricas do canal educacional
+          <strong>Acervos do Saber</strong> no YouTube (resumos de livros de finanças pessoais, carreira e desenvolvimento humano).
+        </p>
+        <div class="meta-grid">
+          <div class="meta-box">
+            <div class="meta-label">Canal Oficial</div>
+            <div class="meta-val"><a href="https://www.youtube.com/@AcervosdoSaber" target="_blank" rel="noopener noreferrer">@AcervosdoSaber</a> (ID: UCOdP1_uHZk_HqcCJUZ2Y4qw)</div>
+          </div>
+          <div class="meta-box">
+            <div class="meta-label">Escopo de Acesso</div>
+            <div class="meta-val">Uso estritamente privado (sem login ou cadastro de terceiros)</div>
+          </div>
+          <div class="meta-box">
+            <div class="meta-label">APIs Utilizadas</div>
+            <div class="meta-val">YouTube Data API v3 &amp; YouTube Analytics API</div>
+          </div>
+          <div class="meta-box">
+            <div class="meta-label">Responsável / Contato</div>
+            <div class="meta-val">Gabriel Henrique P. de Paula · <a href="mailto:bielhpp@gmail.com">bielhpp@gmail.com</a></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-dark">
+        <h2>O que esta ferramenta executa localmente</h2>
+        <ul class="check">
+          <li><strong>Envio e agendamento próprio:</strong> upload resumível de vídeos e miniaturas personalizadas exclusivamente no canal Acervos do Saber (<code>youtube.upload</code>).</li>
+          <li><strong>Leitura editorial e de métricas:</strong> consulta aos vídeos, estatísticas do canal e desempenho de retenção (<code>youtube.readonly</code> e <code>yt-analytics.readonly</code>).</li>
+          <li><strong>Moderação com revisão humana:</strong> rascunhos de respostas a comentários aprovados manualmente antes de qualquer envio (<code>youtube.force-ssl</code>).</li>
+          <li><strong>Armazenamento local protegido:</strong> credenciais OAuth 2.0 residem apenas na estação local do proprietário, sem compartilhamento externo.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="compliance-box" aria-label="Transparência e Conformidade">
+      <div class="compliance-header">
+        <div>
+          <h2 style="margin-bottom: 4px;">Transparência, Privacidade e Conformidade (YouTube API Services)</h2>
+          <p style="font-size: 0.92rem; color: var(--muted);">
+            O Acervos do Saber Studio utiliza os Serviços de API do YouTube e segue integralmente os Termos de Serviço do YouTube e a Política de Privacidade do Google.
+          </p>
+        </div>
+      </div>
+      <div class="compliance-links">
+        <a class="link-pill" href="https://bielhpp.github.io/acervos-do-saber/privacy.html">
+          <strong>Política de Privacidade (Privacy Policy)</strong>
+          <span>https://bielhpp.github.io/acervos-do-saber/privacy.html</span>
+        </a>
+        <a class="link-pill" href="https://bielhpp.github.io/acervos-do-saber/terms.html">
+          <strong>Termos de Utilização (Terms of Service)</strong>
+          <span>https://bielhpp.github.io/acervos-do-saber/terms.html</span>
+        </a>
+        <a class="link-pill" href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">
+          <strong>Política de Privacidade do Google</strong>
+          <span>https://policies.google.com/privacy</span>
+        </a>
+        <a class="link-pill" href="https://www.youtube.com/t/terms" target="_blank" rel="noopener noreferrer">
+          <strong>Termos de Serviço do YouTube</strong>
+          <span>https://www.youtube.com/t/terms</span>
+        </a>
+        <a class="link-pill" href="https://myaccount.google.com/permissions" target="_blank" rel="noopener noreferrer">
+          <strong>Configurações de Segurança do Google (Revogar Acesso)</strong>
+          <span>https://myaccount.google.com/permissions</span>
+        </a>
+        <a class="link-pill" href="https://www.youtube.com/@AcervosdoSaber" target="_blank" rel="noopener noreferrer">
+          <strong>Canal Oficial no YouTube</strong>
+          <span>https://www.youtube.com/@AcervosdoSaber</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-wrap">
+      <span>URL canônica: <a href="https://bielhpp.github.io/acervos-do-saber/">https://bielhpp.github.io/acervos-do-saber/</a> · Projeto: Acervos do Saber Studio</span>
+      <span>
+        <a href="privacy.html">Política de Privacidade</a> ·
+        <a href="terms.html">Termos de Utilização</a> ·
+        Contato: <a href="mailto:bielhpp@gmail.com">bielhpp@gmail.com</a>
+      </span>
+    </div>
+  </footer>
+</body>
+</html>
